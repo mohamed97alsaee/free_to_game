@@ -60,7 +60,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ],
                 )
               : GridView.builder(
-                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  padding: const EdgeInsets.all(24),
                   gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                       childAspectRatio: 1 / 1.5,
                       mainAxisSpacing: 24,
