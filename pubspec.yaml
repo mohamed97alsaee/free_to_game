@@ -38,6 +38,7 @@ dependencies:
   path_provider:
   http:
   google_fonts:
+  shimmer:
 
 dev_dependencies:
   flutter_test:
