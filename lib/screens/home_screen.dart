@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:free_to_game/providers/dark_mode_provider.dart';
 import 'package:free_to_game/providers/games_provider.dart';
 import 'package:free_to_game/widgets/game_card.dart';
 import 'package:provider/provider.dart';
@@ -25,6 +26,9 @@ class _HomeScreenState extends State<HomeScreen> {
     Size size = MediaQuery.of(context).size;
     return Consumer<GamesProvider>(builder: (context, gamesConsumer, child) {
       return Scaffold(
+        floatingActionButton: FloatingActionButton(onPressed: () {
+          Provider.of<DarkModeProvider>(context, listen: false).switchMode();
+        }),
         drawer: const Drawer(
           child: SafeArea(
             child: Column(

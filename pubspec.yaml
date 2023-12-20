@@ -39,6 +39,7 @@ dependencies:
   http:
   google_fonts:
   shimmer:
+  shared_preferences:
 
 dev_dependencies:
   flutter_test:
