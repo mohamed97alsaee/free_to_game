@@ -41,11 +41,20 @@ class _MainButtonState extends State<MainButton> {
             children: [
               widget.isLoading
                   ? const SizedBox(
-                      width: 20, height: 20, child: CircularProgressIndicator())
-                  : Text(
-                      widget.text,
-                      style: TextStyle(
-                          color: widget.txtcolor, fontWeight: FontWeight.bold),
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Colors.white,
+                      ))
+                  : Padding(
+                      padding: const EdgeInsets.all(2.0),
+                      child: Text(
+                        widget.text,
+                        style: TextStyle(
+                            color: widget.txtcolor,
+                            fontWeight: FontWeight.bold),
+                      ),
                     ),
             ],
           ),

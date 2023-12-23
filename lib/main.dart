@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:free_to_game/providers/auth_provider.dart';
 import 'package:free_to_game/providers/dark_mode_provider.dart';
 import 'package:free_to_game/providers/games_provider.dart';
+import 'package:free_to_game/screens/home_screen.dart';
 import 'package:free_to_game/screens/login_screen.dart';
 import 'package:provider/provider.dart';
 
@@ -33,6 +34,14 @@ class _MyAppState extends State<MyApp> {
         return MaterialApp(
           debugShowCheckedModeBanner: false,
           theme: ThemeData(
+              dividerTheme: DividerThemeData(
+                  color: darkModeConsumer.isDark
+                      ? Colors.white30
+                      : Colors.black38),
+              drawerTheme: DrawerThemeData(
+                backgroundColor:
+                    darkModeConsumer.isDark ? Colors.black : Colors.white,
+              ),
               inputDecorationTheme: const InputDecorationTheme(
                   border: OutlineInputBorder(
                       borderRadius: BorderRadius.all(Radius.circular(20)))),
@@ -70,11 +79,17 @@ class _ScreenRouterState extends State<ScreenRouter> {
   @override
   void initState() {
     Provider.of<DarkModeProvider>(context, listen: false).getMode();
+    Provider.of<AuthProvider>(context, listen: false).checkIsAuthrntecated();
+
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return const LoginScreen();
+    return Consumer<AuthProvider>(builder: (context, authConsumer, child) {
+      return authConsumer.isAuthenticated
+          ? const HomeScreen()
+          : const LoginScreen();
+    });
   }
 }

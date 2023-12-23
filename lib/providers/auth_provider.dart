@@ -3,10 +3,13 @@ import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
+
   bool isFailed = false;
-  bool isLoading = true;
+  bool isLoading = false;
+  bool isAuthenticated = false;
 
   setLoading(bool value) {
     Timer(const Duration(milliseconds: 50), () {
@@ -20,6 +23,30 @@ class AuthProvider with ChangeNotifier {
       isFailed = value;
       notifyListeners();
     });
+  }
+
+  setISAuthentecated(bool value) {
+    Timer(const Duration(milliseconds: 50), () {
+      isAuthenticated = value;
+      notifyListeners();
+    });
+  }
+
+  checkIsAuthrntecated() async {
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? token = prefs.getString("token");
+    if (token == null) {
+      setISAuthentecated(false);
+    } else {
+      setISAuthentecated(true);
+    }
+  }
+
+  storeToken(String token) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.setString("token", token);
+    setISAuthentecated(true);
   }
 
   Future<List> login(Map sendedBody) async {
@@ -38,6 +65,8 @@ class AuthProvider with ChangeNotifier {
     }
 
     if (response.statusCode == 201) {
+      storeToken(json.decode(response.body)['token']);
+
       setLoading(false);
       setFailed(false);
 
@@ -48,5 +77,11 @@ class AuthProvider with ChangeNotifier {
 
       return [false, json.decode(response.body)['message']];
     }
+  }
+
+  logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    prefs.clear();
+    setISAuthentecated(false);
   }
 }

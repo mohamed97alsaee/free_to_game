@@ -1,5 +1,1 @@
-class Api {
-
-
-  
-}
+class Api {}
