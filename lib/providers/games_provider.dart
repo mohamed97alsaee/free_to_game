@@ -1,15 +1,14 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:free_to_game/services/api.dart';
 
 import '../models/game_model.dart';
 import 'dart:async';
 
-import 'package:http/http.dart' as http;
-
 class GamesProvider with ChangeNotifier {
   List<GameModel> games = [];
-
+  Api api = Api();
   bool isFailed = false;
   bool isLoading = true;
 
@@ -29,8 +28,7 @@ class GamesProvider with ChangeNotifier {
 
   fetchAllGamesFromApi() async {
     setLoading(true);
-    var response =
-        await http.get(Uri.parse("https://www.freetogame.com/api/games"));
+    var response = await api.get("https://www.freetogame.com/api/games", {});
 
     if (kDebugMode) {
       print("STATUS CODE : ${response.statusCode.toString()}");
@@ -56,8 +54,10 @@ class GamesProvider with ChangeNotifier {
   fetchGamesByPlatform(String p) async {
     setLoading(true);
 
-    var response = await http
-        .get(Uri.parse("https://www.freetogame.com/api/games?platform=$p"));
+    var response =
+        await api.get("https://www.freetogame.com/api/games?platform=$p", {});
+    // http
+    //     .get(Uri.parse("https://www.freetogame.com/api/games?platform=$p"));
 
     if (kDebugMode) {
       print("STATUS CODE : ${response.statusCode.toString()}");

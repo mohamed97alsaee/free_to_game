@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
+import 'package:free_to_game/services/api.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthProvider with ChangeNotifier {
+  Api api = Api();
 
   bool isFailed = false;
   bool isLoading = false;
@@ -33,7 +34,6 @@ class AuthProvider with ChangeNotifier {
   }
 
   checkIsAuthrntecated() async {
-    
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String? token = prefs.getString("token");
     if (token == null) {
@@ -51,13 +51,9 @@ class AuthProvider with ChangeNotifier {
 
   Future<List> login(Map sendedBody) async {
     setLoading(true);
-    final response = await http.post(
-        Uri.parse("https://api.ha-k.ly/api/v1/client/auth/login"),
-        headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json"
-        },
-        body: json.encode(sendedBody));
+
+    final response = await api.post(
+        "https://api.ha-k.ly/api/v1/client/auth/login", sendedBody);
 
     if (kDebugMode) {
       print("STATUS CODE${response.statusCode}");
@@ -71,6 +67,32 @@ class AuthProvider with ChangeNotifier {
       setFailed(false);
 
       return [true, "Loged In Successfully"];
+    } else {
+      setLoading(false);
+      setFailed(true);
+
+      return [false, json.decode(response.body)['message']];
+    }
+  }
+
+  Future<List> register(Map sendedBody) async {
+    setLoading(true);
+
+    final response = await api.post(
+        "https://api.ha-k.ly/api/v1/client/auth/register", sendedBody);
+
+    if (kDebugMode) {
+      print("STATUS CODE${response.statusCode}");
+      print("BODY :${response.body}");
+    }
+
+    if (response.statusCode == 201) {
+      // storeToken(json.decode(response.body)['token']);
+
+      setLoading(false);
+      setFailed(false);
+
+      return [true, "Account Created Successfully"];
     } else {
       setLoading(false);
       setFailed(true);

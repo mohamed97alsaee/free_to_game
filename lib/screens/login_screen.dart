@@ -1,3 +1,6 @@
+import 'package:free_to_game/screens/register_screen.dart';
+
+import '../services/api.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:free_to_game/main.dart';
@@ -17,6 +20,8 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController passwordController = TextEditingController();
   TextEditingController deviceNameController = TextEditingController();
 
+  Api api = Api();
+
   bool hidePassword = true;
   bool formIsValid = false;
 
@@ -26,6 +31,32 @@ class _LoginScreenState extends State<LoginScreen> {
   Widget build(BuildContext context) {
     return Consumer<AuthProvider>(builder: (context, authConsumer, child) {
       return Scaffold(
+        // floatingActionButton: Column(
+        //   mainAxisSize: MainAxisSize.min,
+        //   children: [
+        //     IconButton(
+        //         onPressed: () {
+        //           api.get("https://www.freetogame.com/api/games", {});
+        //         },
+        //         icon: const Icon(Icons.download)),
+        //     IconButton(
+        //         onPressed: () {
+        //           api.post();
+        //         },
+        //         icon: const Icon(Icons.download)),
+        //     IconButton(
+        //         onPressed: () {
+        //           api.put();
+        //         },
+        //         icon: const Icon(Icons.download)),
+        //     IconButton(
+        //         onPressed: () {
+        //           api.delete();
+        //         },
+        //         icon: const Icon(Icons.download))
+        //   ],
+        // ),
+
         appBar: AppBar(
           title: const Text("LOGIN"),
         ),
@@ -133,7 +164,22 @@ class _LoginScreenState extends State<LoginScreen> {
                         }
                       });
                     },
-                    isLoading: authConsumer.isLoading)
+                    isLoading: authConsumer.isLoading),
+                const SizedBox(
+                  height: 16,
+                ),
+                MainButton(
+                    text: "Create Account",
+                    color: Colors.orange,
+                    txtcolor: Colors.white,
+                    isActive: true,
+                    onPressd: () {
+                      Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                              builder: (context) => const RegisterScreen()));
+                    },
+                    isLoading: false)
               ],
             ),
           ),
