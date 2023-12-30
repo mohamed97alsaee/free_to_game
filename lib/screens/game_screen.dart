@@ -16,20 +16,32 @@ class _GameScreenState extends State<GameScreen> {
     Size size = MediaQuery.of(context).size;
     return Consumer<GamesProvider>(builder: (context, gamesConsumer, child) {
       return Scaffold(
-        floatingActionButton: FloatingActionButton(
-            child: Text(gamesConsumer.favoriteGames.length.toString()),
-            onPressed: () {
-              Provider.of<GamesProvider>(context, listen: false)
-                  .addToFavoriteOnFirebase(widget.gameModel);
-            }),
         appBar: AppBar(),
         body: Center(
           child: Column(
             children: [
-              Image.network(
-                widget.gameModel.thumbnail,
-                width: size.width,
-                fit: BoxFit.cover,
+              Stack(
+                children: [
+                  Image.network(
+                    widget.gameModel.thumbnail,
+                    width: size.width,
+                    fit: BoxFit.cover,
+                  ),
+                  Positioned(
+                    bottom: 16,
+                    right: 16,
+                    child: GestureDetector(
+                        child: Icon(
+                          Icons.favorite,
+                          color: Colors.orange,
+                          size: 32,
+                        ),
+                        onTap: () {
+                          Provider.of<GamesProvider>(context, listen: false)
+                              .addToFavoriteOnFirebase(widget.gameModel);
+                        }),
+                  )
+                ],
               ),
               Text(widget.gameModel.title),
             ],
