@@ -1,7 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:free_to_game/providers/auth_provider.dart';
 import 'package:free_to_game/providers/dark_mode_provider.dart';
 import 'package:free_to_game/providers/games_provider.dart';
+import 'package:free_to_game/screens/favorite_game_screen.dart';
 import 'package:free_to_game/widgets/drawer_tile.dart';
 import 'package:free_to_game/widgets/game_card.dart';
 import 'package:provider/provider.dart';
@@ -16,6 +18,7 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int seletedIndexbyUser = 1;
+  TextEditingController searchController = TextEditingController();
 
   @override
   void initState() {
@@ -97,10 +100,21 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
           ),
-          appBar: AppBar(),
-          body: Center(
-            child: gamesConsumer.isFailed
-                ? Column(
+          appBar: AppBar(
+            actions: [
+              IconButton(
+                  onPressed: () {
+                    Navigator.push(
+                        context,
+                        CupertinoPageRoute(
+                            builder: (context) => const FavoriteGamesSCreen()));
+                  },
+                  icon: const Icon(Icons.favorite))
+            ],
+          ),
+          body: gamesConsumer.isFailed
+              ? Center(
+                  child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Icon(
@@ -113,35 +127,61 @@ class _HomeScreenState extends State<HomeScreen> {
                         style: TextStyle(fontSize: 18, color: Colors.black38),
                       ),
                     ],
-                  )
-                : GridView.builder(
-                    padding: const EdgeInsets.all(24),
-                    gridDelegate:
-                        const SliverGridDelegateWithFixedCrossAxisCount(
-                            childAspectRatio: 1 / 1.5,
-                            mainAxisSpacing: 24,
-                            crossAxisSpacing: 24,
-                            crossAxisCount: 2),
-                    itemCount: gamesConsumer.isLoading
-                        ? 10
-                        : gamesConsumer.games.length,
-                    shrinkWrap: true,
-                    itemBuilder: (context, index) {
-                      return gamesConsumer.isLoading
-                          ? ClipRRect(
-                              borderRadius: BorderRadius.circular(12),
-                              child: Shimmer(
-                                  gradient: const LinearGradient(
-                                      colors: [Colors.yellow, Colors.white10]),
-                                  child: Container(
-                                    color: Colors.yellow,
-                                  )),
-                            )
-                          : GameCard(
-                              gameModel: gamesConsumer.games[index],
-                            );
-                    }),
-          ),
+                  ),
+                )
+              : SingleChildScrollView(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.all(16.0),
+                        child: TextField(
+                          controller: searchController,
+                          onChanged: (value) {
+                            Provider.of<GamesProvider>(context, listen: false)
+                                .searchByTitle(value);
+                          },
+                          decoration:
+                              const InputDecoration(hintText: "Search here"),
+                        ),
+                      ),
+                      GridView.builder(
+                          physics: const NeverScrollableScrollPhysics(),
+                          padding: const EdgeInsets.all(24),
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                                  childAspectRatio: 1 / 1.5,
+                                  mainAxisSpacing: 24,
+                                  crossAxisSpacing: 24,
+                                  crossAxisCount: 2),
+                          itemCount: gamesConsumer.isLoading
+                              ? 10
+                              : searchController.text.isEmpty
+                                  ? gamesConsumer.games.length
+                                  : gamesConsumer.filteredGames.length,
+                          shrinkWrap: true,
+                          itemBuilder: (context, index) {
+                            return gamesConsumer.isLoading
+                                ? ClipRRect(
+                                    borderRadius: BorderRadius.circular(12),
+                                    child: Shimmer(
+                                        gradient: const LinearGradient(colors: [
+                                          Colors.yellow,
+                                          Colors.white10
+                                        ]),
+                                        child: Container(
+                                          color: Colors.yellow,
+                                        )),
+                                  )
+                                : GameCard(
+                                    gameModel: searchController.text.isEmpty
+                                        ? gamesConsumer.games[index]
+                                        : gamesConsumer.filteredGames[index],
+                                  );
+                          }),
+                    ],
+                  ),
+                ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: seletedIndexbyUser,
             onTap: (index) {

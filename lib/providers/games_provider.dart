@@ -9,6 +9,7 @@ import 'dart:async';
 
 class GamesProvider with ChangeNotifier {
   List<GameModel> games = [];
+  List<GameModel> filteredGames = [];
   List<GameModel> favoriteGames = [];
 
   Api api = Api();
@@ -29,7 +30,17 @@ class GamesProvider with ChangeNotifier {
     });
   }
 
+  searchByTitle(String title) {
+    filteredGames = games
+        .where((element) =>
+            element.title.toLowerCase().contains(title.toLowerCase()))
+        .toList();
+
+    notifyListeners();
+  }
+
   fetchAllGamesFromApi() async {
+    getFavoriteGamesFromFirebase();
     setLoading(true);
     var response = await api.get("https://www.freetogame.com/api/games", {});
 
@@ -55,6 +66,8 @@ class GamesProvider with ChangeNotifier {
   }
 
   fetchGamesByPlatform(String p) async {
+    getFavoriteGamesFromFirebase();
+
     setLoading(true);
 
     var response =
@@ -85,28 +98,30 @@ class GamesProvider with ChangeNotifier {
   }
 
   addToFavoriteOnFirebase(GameModel gm) async {
-    await getFavoriteGamesFromFirebase().then((value) {
-      FirebaseFirestore firebaseStorage = FirebaseFirestore.instance;
-      if (!favoriteGames.contains(gm)) {
-        firebaseStorage.collection("mygames").add(gm.toJson());
-      }
-    });
+    FirebaseFirestore firebaseStorage = FirebaseFirestore.instance;
+
+    if (!favoriteGames.contains(gm) || favoriteGames.isEmpty) {
+      firebaseStorage.collection("mygames").add(gm.toJson());
+    }
 
     notifyListeners();
   }
 
-  getFavoriteGamesFromFirebase() {
+  getFavoriteGamesFromFirebase() async {
+    setLoading(true);
+
     FirebaseFirestore firebaseStorage = FirebaseFirestore.instance;
 
-    firebaseStorage.collection("mygames").get().then((response) {
+    await firebaseStorage.collection("mygames").get().then((response) {
       if (kDebugMode) {
-        print(response.docs.first.data());
+        print("mygames Collection is : ${response.docs.first.data()}");
       }
+
       favoriteGames.clear();
       for (var x in response.docs) {
         favoriteGames.add(GameModel.fromJson(x.data()));
       }
     });
-    notifyListeners();
+    setLoading(false);
   }
 }
