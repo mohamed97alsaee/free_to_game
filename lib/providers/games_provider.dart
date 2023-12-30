@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:free_to_game/services/api.dart';
 
@@ -8,6 +9,8 @@ import 'dart:async';
 
 class GamesProvider with ChangeNotifier {
   List<GameModel> games = [];
+  List<GameModel> favoriteGames = [];
+
   Api api = Api();
   bool isFailed = false;
   bool isLoading = true;
@@ -79,5 +82,31 @@ class GamesProvider with ChangeNotifier {
       setFailed(true);
     }
     setLoading(false);
+  }
+
+  addToFavoriteOnFirebase(GameModel gm) async {
+    await getFavoriteGamesFromFirebase().then((value) {
+      FirebaseFirestore firebaseStorage = FirebaseFirestore.instance;
+      if (!favoriteGames.contains(gm)) {
+        firebaseStorage.collection("mygames").add(gm.toJson());
+      }
+    });
+
+    notifyListeners();
+  }
+
+  getFavoriteGamesFromFirebase() {
+    FirebaseFirestore firebaseStorage = FirebaseFirestore.instance;
+
+    firebaseStorage.collection("mygames").get().then((response) {
+      if (kDebugMode) {
+        print(response.docs.first.data());
+      }
+      favoriteGames.clear();
+      for (var x in response.docs) {
+        favoriteGames.add(GameModel.fromJson(x.data()));
+      }
+    });
+    notifyListeners();
   }
 }

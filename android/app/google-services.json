@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "854919698924",
+    "project_id": "free-to-game-tutorial",
+    "storage_bucket": "free-to-game-tutorial.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:854919698924:android:0b0907612bd52ba11ac8c9",
+        "android_client_info": {
+          "package_name": "com.example.free_to_game"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAN2j1xmXADQDXvkekTHY13FzhlAzYZl8Y"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

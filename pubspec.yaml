@@ -40,6 +40,8 @@ dependencies:
   google_fonts:
   shimmer:
   shared_preferences:
+  firebase_core:
+  cloud_firestore:
 
 dev_dependencies:
   flutter_test:

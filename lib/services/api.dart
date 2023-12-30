@@ -13,7 +13,7 @@ class Api {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": prefs.getString("token")!
+        "Authorization": prefs.getString("token").toString()
       },
     );
 
@@ -34,7 +34,7 @@ class Api {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": prefs.getString("token")!
+        "Authorization": prefs.getString("token").toString()
       },
     );
 
@@ -56,7 +56,7 @@ class Api {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": prefs.getString("token")!
+        "Authorization": prefs.getString("token").toString()
       },
     );
 
@@ -78,7 +78,7 @@ class Api {
       headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
-        "Authorization": prefs.getString("token")!
+        "Authorization": prefs.getString("token").toString()
       },
     );
 
